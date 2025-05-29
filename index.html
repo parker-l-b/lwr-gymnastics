@@ -5,105 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Gymnastics Camp RSVP</title>
   <style>
-    :root {
-      --pink-light: #ffe6f0;
-      --pink: #ff99cc;
-      --pink-dark: #e75480;
-      --text-dark: #3a3a3a;
-      --white: #fff;
-    }
-
-    body {
-      font-family: "Segoe UI", sans-serif;
-      background-color: var(--pink-light);
-      color: var(--text-dark);
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    header {
-      background-color: var(--pink);
-      color: var(--white);
-      padding: 30px 20px;
-      width: 100%;
-      text-align: center;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    h1 {
-      margin: 0;
-      font-size: 2.5em;
-    }
-
-    main {
-      max-width: 500px;
-      width: 90%;
-      background: var(--white);
-      margin: 30px auto;
-      padding: 30px;
-      border-radius: 16px;
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-    }
-
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
-
-    input[type="text"] {
-      padding: 12px;
-      border: 2px solid var(--pink);
-      border-radius: 8px;
-      font-size: 1em;
-    }
-
-    button {
-      padding: 12px;
-      background-color: var(--pink-dark);
-      color: var(--white);
-      border: none;
-      border-radius: 8px;
-      font-size: 1em;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-
-    button:hover:not(:disabled) {
-      background-color: #d44172;
-    }
-
-    button:disabled {
-      background-color: #aaa;
-      cursor: not-allowed;
-    }
-
-    h3 {
-      margin-top: 30px;
-      color: var(--pink-dark);
-    }
-
-    ul {
-      list-style-type: none;
-      padding: 0;
-    }
-
-    li {
-      background-color: var(--pink);
-      color: var(--white);
-      padding: 10px;
-      margin: 5px 0;
-      border-radius: 10px;
-      font-weight: bold;
-    }
-
-    footer {
-      margin: 40px 0 10px;
-      color: #999;
-    }
+    /* Use the pink theme from earlier */
   </style>
 </head>
 <body>
@@ -115,7 +17,7 @@
 
   <main>
     <form id="rsvpForm">
-      <input type="text" id="nameInput" placeholder="Enter your child's name and age" required />
+      <input type="text" id="nameInput" placeholder="Enter your name" required />
       <button type="submit">RSVP</button>
     </form>
 
@@ -125,38 +27,77 @@
 
   <footer>&copy; 2025 Gymnastics Camp</footer>
 
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"></script>
+
   <script>
+    // Replace with your Firebase config
+    <script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyCwX2yRnEzVnMdaDhU4DrMtaVtAXfkJru0",
+    authDomain: "sample-fi-93d11.firebaseapp.com",
+    projectId: "sample-fi-93d11",
+    storageBucket: "sample-fi-93d11.firebasestorage.app",
+    messagingSenderId: "613873127592",
+    appId: "1:613873127592:web:d4135956e223844e80329d"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+</script>
+    // Initialize Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
     const rsvpForm = document.getElementById('rsvpForm');
     const nameInput = document.getElementById('nameInput');
     const rsvpList = document.getElementById('rsvpList');
 
-    let rsvps = JSON.parse(localStorage.getItem('rsvps')) || [];
-    updateList();
-
     rsvpForm.addEventListener('submit', function(e) {
       e.preventDefault();
       const name = nameInput.value.trim();
-      if (name && rsvps.length < 20) {
-        rsvps.push(name);
-        localStorage.setItem('rsvps', JSON.stringify(rsvps));
-        updateList();
-        nameInput.value = '';
+      if (name) {
+        database.ref('rsvps').once('value', snapshot => {
+          const data = snapshot.val() || [];
+          if (data.length < 20) {
+            data.push(name);
+            database.ref('rsvps').set(data);
+            nameInput.value = '';
+          } else {
+            alert("Sorry, the camp is full!");
+          }
+        });
       }
     });
 
     function updateList() {
-      rsvpList.innerHTML = '';
-      rsvps.forEach((name, index) => {
-        const li = document.createElement('li');
-        li.textContent = `${index + 1}. ${name}`;
-        rsvpList.appendChild(li);
-      });
+      database.ref('rsvps').on('value', snapshot => {
+        const data = snapshot.val() || [];
+        rsvpList.innerHTML = '';
+        data.forEach((name, i) => {
+          const li = document.createElement('li');
+          li.textContent = `${i + 1}. ${name}`;
+          rsvpList.appendChild(li);
+        });
 
-      if (rsvps.length >= 20) {
-        nameInput.disabled = true;
-        rsvpForm.querySelector('button').disabled = true;
-      }
+        if (data.length >= 20) {
+          nameInput.disabled = true;
+          rsvpForm.querySelector('button').disabled = true;
+        } else {
+          nameInput.disabled = false;
+          rsvpForm.querySelector('button').disabled = false;
+        }
+      });
     }
+
+    updateList();
   </script>
 </body>
 </html>
