@@ -27,13 +27,8 @@
 
   <footer>&copy; 2025 Gymnastics Camp</footer>
 
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"></script>
 
-  <script>
-    // Replace with your Firebase config
-    <script type="module">
+   <script type="module">
   // Import the functions you need from the SDKs you need
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
   // TODO: Add SDKs for Firebase products that you want to use
@@ -52,6 +47,13 @@
   // Initialize Firebase
   const app = initializeApp(firebaseConfig);
 </script>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"></script>
+
+  <script>
+    // Replace with your Firebase config
+   
     // Initialize Firebase
     const app = firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
@@ -99,5 +101,6 @@
 
     updateList();
   </script>
+  
 </body>
 </html>
