@@ -5,65 +5,131 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Gymnastics Camp RSVP</title>
   <style>
+    :root {
+      --pink-light: #ffe6f0;
+      --pink: #ff99cc;
+      --pink-dark: #e75480;
+      --text-dark: #3a3a3a;
+      --white: #fff;
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      background-color: #f0f8ff;
-      margin: 40px;
+      font-family: "Segoe UI", sans-serif;
+      background-color: var(--pink-light);
+      color: var(--text-dark);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    header {
+      background-color: var(--pink);
+      color: var(--white);
+      padding: 30px 20px;
+      width: 100%;
       text-align: center;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
+
     h1 {
-      color: #333;
+      margin: 0;
+      font-size: 2.5em;
     }
+
+    main {
+      max-width: 500px;
+      width: 90%;
+      background: var(--white);
+      margin: 30px auto;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    }
+
     form {
-      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
     }
+
     input[type="text"] {
-      padding: 10px;
-      width: 200px;
+      padding: 12px;
+      border: 2px solid var(--pink);
+      border-radius: 8px;
+      font-size: 1em;
     }
+
     button {
-      padding: 10px 20px;
-      margin-left: 10px;
-      background-color: #28a745;
-      color: white;
+      padding: 12px;
+      background-color: var(--pink-dark);
+      color: var(--white);
       border: none;
+      border-radius: 8px;
+      font-size: 1em;
       cursor: pointer;
+      transition: background-color 0.3s ease;
     }
+
+    button:hover:not(:disabled) {
+      background-color: #d44172;
+    }
+
     button:disabled {
       background-color: #aaa;
+      cursor: not-allowed;
     }
+
+    h3 {
+      margin-top: 30px;
+      color: var(--pink-dark);
+    }
+
     ul {
       list-style-type: none;
       padding: 0;
     }
+
     li {
-      background: #e0f7fa;
-      padding: 8px;
-      margin: 5px auto;
-      width: 300px;
-      border-radius: 5px;
+      background-color: var(--pink);
+      color: var(--white);
+      padding: 10px;
+      margin: 5px 0;
+      border-radius: 10px;
+      font-weight: bold;
+    }
+
+    footer {
+      margin: 40px 0 10px;
+      color: #999;
     }
   </style>
 </head>
 <body>
 
-  <h1>Gymnastics Camp RSVP</h1>
-  <p>Only 20 spots available!</p>
+  <header>
+    <h1>RSVP for Gymnastics Camp</h1>
+    <p>Only 20 spots available – reserve yours now!</p>
+  </header>
 
-  <form id="rsvpForm">
-    <input type="text" id="nameInput" placeholder="Enter your child's name and age" required />
-    <button type="submit">RSVP</button>
-  </form>
+  <main>
+    <form id="rsvpForm">
+      <input type="text" id="nameInput" placeholder="Enter your name" required />
+      <button type="submit">RSVP</button>
+    </form>
 
-  <h3>Confirmed Attendees:</h3>
-  <ul id="rsvpList"></ul>
+    <h3>Confirmed Attendees:</h3>
+    <ul id="rsvpList"></ul>
+  </main>
+
+  <footer>&copy; 2025 Gymnastics Camp</footer>
 
   <script>
     const rsvpForm = document.getElementById('rsvpForm');
     const nameInput = document.getElementById('nameInput');
     const rsvpList = document.getElementById('rsvpList');
 
-    // Load existing RSVPs from localStorage
     let rsvps = JSON.parse(localStorage.getItem('rsvps')) || [];
     updateList();
 
@@ -86,7 +152,6 @@
         rsvpList.appendChild(li);
       });
 
-      // Disable form if full
       if (rsvps.length >= 20) {
         nameInput.disabled = true;
         rsvpForm.querySelector('button').disabled = true;
